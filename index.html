@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      🌱 Agente Reactivo Simple - Diagnóstico Nutricional de Plantas
+    </title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1a472a 0%,
+          #2d5016 50%,
+          #228b22 100%
+        );
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header .subtitle {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .header .institution {
+        margin-top: 10px;
+        font-size: 1em;
+        opacity: 0.8;
+      }
+
+      .agent-info {
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .agent-info h2 {
+        color: #2d5016;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .agent-badge {
+        background: linear-gradient(135deg, #4caf50, #2e7d32);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.75em;
+      }
+
+      .characteristics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 15px;
+      }
+
+      .char-item {
+        background: #e8f5e9;
+        padding: 12px 18px;
+        border-radius: 10px;
+        border-left: 4px solid #4caf50;
+        font-size: 0.95em;
+      }
+
+      .architecture-diagram {
+        background: linear-gradient(135deg, #fff8e1, #fffde7);
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 20px;
+        border: 2px dashed #ffc107;
+      }
+
+      .architecture-diagram h3 {
+        text-align: center;
+        color: #f57c00;
+        margin-bottom: 20px;
+      }
+
+      .flow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .flow-step {
+        background: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        border: 3px solid #ffc107;
+        text-align: center;
+        min-width: 150px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .flow-step .icon {
+        font-size: 2em;
+        margin-bottom: 8px;
+      }
+
+      .flow-step .label {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .flow-step .description {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .flow-arrow {
+        color: #ff9800;
+        font-size: 2.5em;
+        font-weight: bold;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 1000px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .panel h3 {
+        color: #2d5016;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #e8f5e9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .symptom-category {
+        margin-bottom: 25px;
+      }
+
+      .category-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-size: 1.05em;
+      }
+
+      .category-nitrogeno {
+        background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        color: #e65100;
+        border-left: 4px solid #ff9800;
+      }
+      .category-potasio {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        color: #c62828;
+        border-left: 4px solid #f44336;
+      }
+      .category-fosforo {
+        background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+        color: #6a1b9a;
+        border-left: 4px solid #9c27b0;
+      }
+
+      .symptom-btn {
+        display: block;
+        width: 100%;
+        padding: 14px 18px;
+        margin: 10px 0;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.3s ease;
+        font-size: 0.95em;
+      }
+
+      .symptom-btn:hover {
+        border-color: #4caf50;
+        background: #f1f8e9;
+        transform: translateX(8px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+      }
+
+      .symptom-btn.selected {
+        border-color: #2e7d32;
+        background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+
+      .symptom-btn.selected::before {
+        content: "✓ ";
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 18px 25px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.05em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #4caf50, #2e7d32);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+      }
+
+      .btn-secondary {
+        background: #f5f5f5;
+        color: #333;
+        border: 2px solid #e0e0e0;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+      }
+
+      .result-panel {
+        min-height: 500px;
+      }
+
+      .result-content {
+        padding: 20px;
+        background: linear-gradient(135deg, #fafafa, #f5f5f5);
+        border-radius: 12px;
+        min-height: 450px;
+      }
+
+      .result-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 400px;
+        color: #9e9e9e;
+        text-align: center;
+      }
+
+      .result-empty .icon {
+        font-size: 5em;
+        margin-bottom: 20px;
+      }
+
+      .result-empty p {
+        margin: 5px 0;
+      }
+
+      .diagnosis-result {
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .perception-display {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-family: "Courier New", monospace;
+        border-left: 4px solid #2196f3;
+      }
+
+      .perception-display strong {
+        color: #1565c0;
+      }
+
+      .diagnosis-header {
+        background: linear-gradient(135deg, #4caf50, #2e7d32);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+
+      .diagnosis-header h4 {
+        font-size: 1.4em;
+        margin-bottom: 8px;
+      }
+
+      .diagnosis-section {
+        background: white;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border-left: 5px solid #4caf50;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .diagnosis-section h5 {
+        color: #2e7d32;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.05em;
+      }
+
+      .diagnosis-section ul {
+        margin-left: 25px;
+        margin-top: 8px;
+      }
+
+      .diagnosis-section li {
+        margin: 5px 0;
+      }
+
+      .urgency-high {
+        border-left-color: #f44336;
+      }
+      .urgency-medium {
+        border-left-color: #ff9800;
+      }
+      .urgency-low {
+        border-left-color: #4caf50;
+      }
+
+      .process-flow {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+      }
+
+      .process-flow h5 {
+        text-align: center;
+        color: #2e7d32;
+        margin-bottom: 15px;
+      }
+
+      .process-flow .flow {
+        gap: 15px;
+      }
+
+      .process-flow .flow-step {
+        padding: 12px 20px;
+        font-size: 0.9em;
+        border-color: #4caf50;
+      }
+
+      .tables-section {
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .tables-section h2 {
+        color: #2d5016;
+        margin-bottom: 20px;
+      }
+
+      .tables-section h3 {
+        color: #2d5016;
+        margin: 25px 0 15px 0;
+      }
+
+      .tabla-peas {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 0.95em;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .tabla-peas th,
+      .tabla-peas td {
+        border: 1px solid #ddd;
+        padding: 14px;
+        text-align: left;
+      }
+
+      .tabla-peas th {
+        background: linear-gradient(135deg, #2e7d32, #1b5e20);
+        color: white;
+        font-weight: bold;
+      }
+
+      .tabla-peas tr:nth-child(even) {
+        background: #f5f5f5;
+      }
+
+      .tabla-peas tr:hover {
+        background: #e8f5e9;
+      }
+
+      .footer {
+        text-align: center;
+        color: white;
+        padding: 25px;
+        margin-top: 25px;
+        opacity: 0.9;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+      }
+
+      .footer p {
+        margin: 5px 0;
+      }
+
+      .selected-symptoms {
+        margin-top: 15px;
+        padding: 10px 15px;
+        background: #e8f5e9;
+        border-radius: 8px;
+        font-size: 0.9em;
+      }
+
+      .selected-symptoms strong {
+        color: #2e7d32;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- ENCABEZADO -->
+      <div class="header">
+        <h1>🌱 Agente Inteligente Reactivo Simple</h1>
+        <p class="subtitle">
+          Sistema de Diagnóstico de Deficiencias Nutricionales en Plantas
+        </p>
+      </div>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <div class="main-content">
+        <!-- PANEL DE SÍNTOMAS -->
+        <div class="panel">
+          <h3>🔬 Seleccione los Síntomas Observados en la Planta</h3>
+
+          <!-- Síntomas de Nitrógeno -->
+          <div class="symptom-category">
+            <div class="category-title category-nitrogeno">
+              🟡 Síntomas de Deficiencia de Nitrógeno (N)
+            </div>
+            <button
+              class="symptom-btn"
+              data-symptom="hojas-verdes-palidas"
+              onclick="toggleSymptom(this)"
+            >
+              🍃 Hojas de color verde pálido
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="crecimiento-atrofiado"
+              onclick="toggleSymptom(this)"
+            >
+              📉 Crecimiento lento o atrofiado
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="hojas-amarillentas"
+              onclick="toggleSymptom(this)"
+            >
+              🟨 Hojas que se vuelven amarillas (clorosis)
+            </button>
+          </div>
+
+          <!-- Síntomas de Potasio -->
+          <div class="symptom-category">
+            <div class="category-title category-potasio">
+              🔴 Síntomas de Deficiencia de Potasio (K)
+            </div>
+            <button
+              class="symptom-btn"
+              data-symptom="bordes-secos-quemados"
+              onclick="toggleSymptom(this)"
+            >
+              🔥 Bordes de hojas secos o quemados (necrosis)
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="tallo-debil-quebradizo"
+              onclick="toggleSymptom(this)"
+            >
+              🥢 Tallo débil o quebradizo
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="resistencia-reducida"
+              onclick="toggleSymptom(this)"
+            >
+              🦠 Planta susceptible a enfermedades
+            </button>
+          </div>
+
+          <!-- Síntomas de Fósforo -->
+          <div class="symptom-category">
+            <div class="category-title category-fosforo">
+              🟣 Síntomas de Deficiencia de Fósforo (P)
+            </div>
+            <button
+              class="symptom-btn"
+              data-symptom="hojas-purpura-rojizo"
+              onclick="toggleSymptom(this)"
+            >
+              🍇 Hojas con tonos púrpura o rojizos
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="maduracion-tardia"
+              onclick="toggleSymptom(this)"
+            >
+              ⏰ Maduración tardía de frutos
+            </button>
+            <button
+              class="symptom-btn"
+              data-symptom="sistema-radicular-debil"
+              onclick="toggleSymptom(this)"
+            >
+              🌿 Sistema radicular poco desarrollado
+            </button>
+          </div>
+
+          <div class="selected-symptoms" id="selectedSymptomsList">
+            <strong>Síntomas seleccionados:</strong>
+            <span id="symptomCount">Ninguno</span>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="ejecutarDiagnostico()">
+              🔍 Ejecutar Diagnóstico
+            </button>
+            <button class="btn btn-secondary" onclick="limpiarSeleccion()">
+              🔄 Limpiar Selección
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL DE RESULTADOS -->
+        <div class="panel result-panel">
+          <h3>📊 Resultado del Agente Reactivo Simple</h3>
+          <div class="result-content" id="resultContent">
+            <div class="result-empty">
+              <div class="icon">🌱</div>
+              <p style="font-size: 1.2em; margin-bottom: 15px">
+                <strong>Agente en espera de percepciones</strong>
+              </p>
+              <p>Seleccione uno o más síntomas observados</p>
+              <p>en la planta y presione</p>
+              <p style="margin-top: 10px">
+                <strong>"Ejecutar Diagnóstico"</strong>
+              </p>
+              <p style="margin-top: 20px; font-size: 0.9em; color: #666">
+                El agente aplicará las reglas condición-acción<br />
+                para generar el diagnóstico correspondiente
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIE DE PÁGINA -->
+      <div class="footer">
+        <p>🌿 <strong>Agente Inteligente Reactivo Simple</strong></p>
+        <p>Sistema de Diagnóstico de Deficiencias Nutricionales en Plantas</p>
+        <p style="margin-top: 10px">
+          Politécnico Colombiano Jaime Isaza Cadavid - 2025
+        </p>
+        <p style="font-size: 0.85em; margin-top: 10px; opacity: 0.8">
+          Taller de Agentes Inteligentes
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // IMPLEMENTACIÓN DEL AGENTE REACTIVO SIMPLE EN JAVASCRIPT
+
+      // Base de conocimiento: Reglas de Condición-Acción
+      const REGLAS_PERCEPCION_ACCION = {
+        // Síntomas de NITRÓGENO
+        "hojas-verdes-palidas": {
+          diagnostico: "Deficiencia de Nitrógeno",
+          sintomas_detectados: ["Hojas de color verde pálido"],
+          tratamiento:
+            "Aplicar fertilizante nitrogenado: urea (46% N) o nitrato de amonio (34% N)",
+          dosis: "150-200 kg/ha para cultivos extensivos",
+          frecuencia: "Cada 4-6 semanas durante período de crecimiento",
+          urgencia: "Alta - síntomas visibles rápidamente",
+          nutriente: "Nitrógeno (N)",
+        },
+        "crecimiento-atrofiado": {
+          diagnostico: "Posible Deficiencia de Nitrógeno o Fósforo",
+          sintomas_detectados: ["Crecimiento lento o atrofiado"],
+          tratamiento:
+            "Aplicar fertilizante NPK balanceado o realizar análisis de suelo",
+          dosis: "100-150 kg/ha de fertilizante compuesto",
+          frecuencia: "Según análisis de suelo",
+          urgencia: "Media - requiere diagnóstico adicional",
+          nutriente: "Nitrógeno/Fósforo (N/P)",
+        },
+        "hojas-amarillentas": {
+          diagnostico: "Deficiencia de Nitrógeno",
+          sintomas_detectados: ["Hojas que se vuelven amarillas (clorosis)"],
+          tratamiento:
+            "Aplicar fertilizante nitrogenado: urea (46% N) o nitrato de amonio (34% N)",
+          dosis: "150-200 kg/ha para cultivos extensivos",
+          frecuencia: "Cada 4-6 semanas durante período de crecimiento",
+          urgencia: "Alta - clorosis avanzada",
+          nutriente: "Nitrógeno (N)",
+        },
+
+        // Síntomas de POTASIO
+        "bordes-secos-quemados": {
+          diagnostico: "Deficiencia de Potasio",
+          sintomas_detectados: [
+            "Bordes de hojas secos o quemados (necrosis marginal)",
+          ],
+          tratamiento:
+            "Aplicar sulfato de potasio (50% K2O) o cloruro de potasio",
+          dosis: "100-150 kg/ha de sulfato de potasio",
+          frecuencia: "Aplicación base al inicio + refuerzo en floración",
+          urgencia: "Media - afecta resistencia y calidad",
+          nutriente: "Potasio (K)",
+        },
+        "tallo-debil-quebradizo": {
+          diagnostico: "Deficiencia de Potasio",
+          sintomas_detectados: ["Tallo débil o quebradizo"],
+          tratamiento:
+            "Aplicar sulfato de potasio (50% K2O) o ceniza de madera",
+          dosis: "100-150 kg/ha de sulfato de potasio",
+          frecuencia: "Aplicación base al inicio + refuerzo en floración",
+          urgencia: "Media - compromete estructura de la planta",
+          nutriente: "Potasio (K)",
+        },
+        "resistencia-reducida": {
+          diagnostico: "Deficiencia de Potasio",
+          sintomas_detectados: ["Planta más susceptible a enfermedades"],
+          tratamiento:
+            "Aplicar sulfato de potasio (50% K2O) para fortalecer defensas",
+          dosis: "100-150 kg/ha de sulfato de potasio",
+          frecuencia: "Aplicación preventiva cada 3-4 semanas",
+          urgencia: "Alta - aumenta vulnerabilidad a patógenos",
+          nutriente: "Potasio (K)",
+        },
+
+        // Síntomas de FÓSFORO
+        "hojas-purpura-rojizo": {
+          diagnostico: "Deficiencia de Fósforo",
+          sintomas_detectados: ["Hojas con tonos púrpura o rojizos"],
+          tratamiento:
+            "Incorporar superfosfato de calcio (18% P2O5) o fosfato diamónico",
+          dosis: "80-120 kg/ha de superfosfato",
+          frecuencia: "Aplicación base antes de siembra + refuerzo temprano",
+          urgencia: "Alta - afecta desarrollo radicular y reproductivo",
+          nutriente: "Fósforo (P)",
+        },
+        "maduracion-tardia": {
+          diagnostico: "Deficiencia de Fósforo",
+          sintomas_detectados: ["Maduración tardía de frutos"],
+          tratamiento: "Aplicar fosfato diamónico (DAP) o ácido fosfórico",
+          dosis: "80-120 kg/ha de fosfato",
+          frecuencia: "Aplicación durante floración y fructificación",
+          urgencia: "Media - afecta rendimiento de cosecha",
+          nutriente: "Fósforo (P)",
+        },
+        "sistema-radicular-debil": {
+          diagnostico: "Deficiencia de Fósforo",
+          sintomas_detectados: ["Sistema radicular poco desarrollado"],
+          tratamiento:
+            "Incorporar superfosfato de calcio (18% P2O5) en zona radicular",
+          dosis: "80-120 kg/ha de superfosfato",
+          frecuencia: "Aplicación base profunda antes de siembra",
+          urgencia: "Alta - compromete absorción de agua y nutrientes",
+          nutriente: "Fósforo (P)",
+        },
+
+        // Combinaciones de síntomas
+        "hojas-amarillentas,hojas-verdes-palidas": {
+          diagnostico: "Deficiencia SEVERA de Nitrógeno",
+          sintomas_detectados: ["Hojas verde pálido", "Hojas amarillentas"],
+          tratamiento:
+            "Aplicación urgente de urea foliar (2-3%) + nitrógeno al suelo",
+          dosis: "200-250 kg/ha de urea",
+          frecuencia: "Aplicación inmediata + seguimiento semanal",
+          urgencia: "MUY ALTA - deficiencia severa confirmada",
+          nutriente: "Nitrógeno (N)",
+        },
+        "bordes-secos-quemados,tallo-debil-quebradizo": {
+          diagnostico: "Deficiencia SEVERA de Potasio",
+          sintomas_detectados: ["Bordes secos/quemados", "Tallo débil"],
+          tratamiento:
+            "Aplicación urgente de sulfato de potasio + fertilización foliar",
+          dosis: "150-200 kg/ha de sulfato de potasio",
+          frecuencia: "Aplicación inmediata + refuerzo en 2 semanas",
+          urgencia: "MUY ALTA - estructura comprometida",
+          nutriente: "Potasio (K)",
+        },
+        "hojas-purpura-rojizo,sistema-radicular-debil": {
+          diagnostico: "Deficiencia SEVERA de Fósforo",
+          sintomas_detectados: ["Hojas púrpura/rojizas", "Raíces débiles"],
+          tratamiento:
+            "Aplicación urgente de superfosfato triple + ácido fosfórico foliar",
+          dosis: "120-150 kg/ha de superfosfato triple",
+          frecuencia: "Aplicación inmediata + seguimiento quincenal",
+          urgencia: "MUY ALTA - desarrollo comprometido",
+          nutriente: "Fósforo (P)",
+        },
+      };
+
+      // CLASE DEL AGENTE REACTIVO SIMPLE
+
+      class AgenteReactivoSimple {
+        constructor(reglas) {
+          this.reglas = reglas;
+          this.nombre = "Agente Reactivo Simple - Diagnóstico Nutricional";
+        }
+
+        // Método PERCIBIR: Procesa la entrada del ambiente
+        percibir(entrada) {
+          if (Array.isArray(entrada)) {
+            const sintomasOrdenados = entrada
+              .map((s) => s.trim().toLowerCase())
+              .sort();
+            return sintomasOrdenados.join(",");
+          }
+          return entrada.trim().toLowerCase();
+        }
+
+        // Método SELECCIONAR_ACCION: Aplica reglas condición-acción
+        seleccionarAccion(percepcion) {
+          // Si la percepción está en las reglas, retornar acción
+          if (this.reglas[percepcion]) {
+            return this.reglas[percepcion];
+          }
+
+          // percepción no reconocida
+          return {
+            diagnostico: "Síntoma no reconocido",
+            mensaje: `El síntoma "${percepcion}" no está en la base de conocimiento.`,
+            error: true,
+          };
+        }
+
+        // Ciclo completo
+        actuar(entradaRaw) {
+          // Paso 1: PERCIBIR
+          const percepcion = this.percibir(entradaRaw);
+
+          // Paso 2: DECIDIR (aplicar reglas)
+          const accion = this.seleccionarAccion(percepcion);
+
+          // Paso 3: ACTUAR (retornar resultado)
+          return {
+            percepcion: percepcion,
+            accion: accion,
+            agente: this.nombre,
+          };
+        }
+      }
+
+      // Instanciar el agente
+      const agente = new AgenteReactivoSimple(REGLAS_PERCEPCION_ACCION);
+
+      // FUNCIONES DE LA INTERFAZ
+
+      let selectedSymptoms = [];
+
+      function toggleSymptom(btn) {
+        const symptom = btn.dataset.symptom;
+        const index = selectedSymptoms.indexOf(symptom);
+
+        if (index > -1) {
+          selectedSymptoms.splice(index, 1);
+          btn.classList.remove("selected");
+        } else {
+          selectedSymptoms.push(symptom);
+          btn.classList.add("selected");
+        }
+
+        actualizarListaSintomas();
+      }
+
+      function actualizarListaSintomas() {
+        const countSpan = document.getElementById("symptomCount");
+        if (selectedSymptoms.length === 0) {
+          countSpan.textContent = "Ninguno";
+        } else {
+          countSpan.textContent = selectedSymptoms.join(", ");
+        }
+      }
+
+      function limpiarSeleccion() {
+        selectedSymptoms = [];
+        document.querySelectorAll(".symptom-btn").forEach((btn) => {
+          btn.classList.remove("selected");
+        });
+        actualizarListaSintomas();
+        document.getElementById("resultContent").innerHTML = `
+                <div class="result-empty">
+                    <div class="icon">🌱</div>
+                    <p style="font-size: 1.2em; margin-bottom: 15px;"><strong>Agente en espera de percepciones</strong></p>
+                    <p>Seleccione uno o más síntomas observados</p>
+                    <p>en la planta y presione</p>
+                    <p style="margin-top: 10px;"><strong>"Ejecutar Diagnóstico"</strong></p>
+                </div>
+            `;
+      }
+
+      function ejecutarDiagnostico() {
+        if (selectedSymptoms.length === 0) {
+          alert(
+            "⚠️ Por favor, seleccione al menos un síntoma para realizar el diagnóstico"
+          );
+          return;
+        }
+
+        // Ejecutar el agente
+        const resultado = agente.actuar(selectedSymptoms);
+
+        // Mostrar resultado
+        mostrarResultado(resultado);
+      }
+
+      function mostrarResultado(data) {
+        const accion = data.accion;
+        const resultContent = document.getElementById("resultContent");
+
+        let urgencyClass = "urgency-medium";
+        if (accion.urgencia) {
+          const urgencia = accion.urgencia.toLowerCase();
+          if (urgencia.includes("muy alta") || urgencia.includes("alta")) {
+            urgencyClass = "urgency-high";
+          } else if (urgencia.includes("baja")) {
+            urgencyClass = "urgency-low";
+          }
+        }
+
+        let html = `
+                <div class="diagnosis-result">
+                    <div class="perception-display">
+                        <strong>📥 PERCEPCIÓN RECIBIDA:</strong><br>
+                        <code>${data.percepcion}</code>
+                    </div>
+                    
+                    <div class="diagnosis-header">
+                        <h4>📋 ${accion.diagnostico || "Diagnóstico"}</h4>
+                        ${
+                          accion.nutriente
+                            ? `<p style="opacity: 0.9;">Nutriente afectado: <strong>${accion.nutriente}</strong></p>`
+                            : ""
+                        }
+                    </div>
+            `;
+
+        if (accion.sintomas_detectados) {
+          html += `
+                    <div class="diagnosis-section">
+                        <h5>🔍 Síntomas Detectados</h5>
+                        <ul>
+                            ${accion.sintomas_detectados
+                              .map((s) => `<li>${s}</li>`)
+                              .join("")}
+                        </ul>
+                    </div>
+                `;
+        }
+
+        if (accion.tratamiento) {
+          html += `
+                    <div class="diagnosis-section ${urgencyClass}">
+                        <h5>💊 Tratamiento Recomendado</h5>
+                        <p>${accion.tratamiento}</p>
+                    </div>
+                `;
+        }
+
+        if (accion.dosis) {
+          html += `
+                    <div class="diagnosis-section">
+                        <h5>📏 Dosis Sugerida</h5>
+                        <p>${accion.dosis}</p>
+                    </div>
+                `;
+        }
+
+        if (accion.frecuencia) {
+          html += `
+                    <div class="diagnosis-section">
+                        <h5>⏰ Frecuencia de Aplicación</h5>
+                        <p>${accion.frecuencia}</p>
+                    </div>
+                `;
+        }
+
+        if (accion.urgencia) {
+          html += `
+                    <div class="diagnosis-section ${urgencyClass}">
+                        <h5>⚡ Nivel de Urgencia</h5>
+                        <p><strong>${accion.urgencia}</strong></p>
+                    </div>
+                `;
+        }
+
+        resultContent.innerHTML = html;
+      }
+    </script>
+  </body>
+</html>

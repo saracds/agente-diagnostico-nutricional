@@ -32,4 +32,4 @@ Este proyecto implementa un **Agente Inteligente Reactivo Simple** para el diagn
 
 ### 🚀 Demo en Vivo
 
-Accede a la aplicación: [https://TU-USUARIO.github.io/agente-diagnostico-nutricional/](https://TU-USUARIO.github.io/agente-diagnostico-nutricional/)
+Accede a la aplicación: (https://saracds.github.io/agente-diagnostico-nutricional/)
